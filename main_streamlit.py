@@ -3,7 +3,7 @@ import os
 import json
 import requests
 from typing import List, Dict, Generator
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import google.generativeai as genai
 import streamlit as st
@@ -11,32 +11,22 @@ from urllib.parse import urljoin, urlparse
 
 # --- Configuration and Initialization ---
 
-def configure_api():
+def configure_api(api_key: str):
     """
-    Configures the Generative AI API by fetching the API key primarily from
-    Streamlit secrets, with a fallback to a local .env file for development.
+    Configures the Generative AI API using the key provided by the user.
     """
-    # For deployed apps on Streamlit Community Cloud, use st.secrets.
-    # We check if the key exists in secrets.
-    if "GEMINI_API_KEY" in st.secrets:
-        api_key = st.secrets["GEMINI_API_KEY"]
-        st.info("Configuring API using key from Streamlit secrets.")
-    #else:
-        #pass()
-        # For local development, load the key from a .env file.
-        #st.info("Streamlit secret not found. Attempting to load API key from .env file for local development.")
-        #load_dotenv(override=True)
-        #api_key = os.getenv("GEMINI_API_KEY")
-
     if not api_key:
-        st.error("Error: GEMINI_API_KEY not found. Please add it to your Streamlit secrets for deployment or to a local .env file.")
+        st.error("API Key is missing. Please provide a valid Gemini API key.")
         st.stop()
         
     try:
         genai.configure(api_key=api_key)
+        st.success("Gemini API configured successfully.")
+        return True
     except Exception as e:
-        st.error(f"Failed to configure Gemini API: {e}")
+        st.error(f"Failed to configure API: {e}")
         st.stop()
+        return False
 
 
 # --- Web Scraping Class ---
@@ -178,13 +168,13 @@ def run_app():
     """
     st.set_page_config(page_title="AI Brochure Generator", page_icon="🤖", layout="wide")
     st.title("🤖 AI-Powered Company Brochure Generator")
-    st.markdown("Enter a company's name and website, and the AI will generate a brochure for prospective clients, investors, and recruits.")
+    st.markdown("Enter a company's name and website, provide your Gemini API Key, and the AI will generate a brochure.")
     
-    # Configure API at the start
-    configure_api()
-
     with st.sidebar:
         st.header("Configuration")
+        
+        api_key = st.text_input("Enter your Gemini API Key", type="password", help="Your API key is not stored.")
+        
         company_name = st.text_input("Company Name", placeholder="e.g., Hugging Face")
         url = st.text_input("Company Website URL", placeholder="https://huggingface.co")
         tone = st.selectbox(
@@ -197,6 +187,9 @@ def run_app():
     # Main content area
     if generate_button:
         # Input validation
+        if not api_key:
+            st.warning("Please enter your Gemini API key in the sidebar.")
+            st.stop()
         if not company_name or not url:
             st.warning("Please enter both a company name and a URL.")
             st.stop()
@@ -205,6 +198,9 @@ def run_app():
         if not all([parsed_url.scheme, parsed_url.netloc]):
              st.warning("Please enter a valid, full URL (e.g., https://example.com).")
              st.stop()
+
+        # Configure the API with the user-provided key first
+        configure_api(api_key)
 
         st.subheader(f"Generating Brochure for {company_name}...")
         
