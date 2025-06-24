@@ -1,5 +1,6 @@
 
 # 🤖 AI-Powered Brochure Generator (Streamlit Web App)
+[](https://ai-brochure-generator-shera.streamlit.app/)
 
 This project is an interactive web application built with **Streamlit** and **Python** that automatically generates a professional company brochure. It scrapes a company's website, uses a **Large Language Model (LLM)** to intelligently identify and fetch content from relevant sub-pages (like "About Us" and "Careers"), and synthesizes all the information into a well-structured **Markdown brochure**.
 
