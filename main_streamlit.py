@@ -3,7 +3,7 @@ import os
 import json
 import requests
 from typing import List, Dict, Generator
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import google.generativeai as genai
 import streamlit as st
@@ -23,9 +23,9 @@ def configure_api():
         st.info("Configuring API using key from Streamlit secrets.")
     else:
         # For local development, load the key from a .env file.
-        st.info("Streamlit secret not found. Attempting to load API key from .env file for local development.")
-        load_dotenv(override=True)
-        api_key = os.getenv("GEMINI_API_KEY")
+        #st.info("Streamlit secret not found. Attempting to load API key from .env file for local development.")
+        #load_dotenv(override=True)
+        #api_key = os.getenv("GEMINI_API_KEY")
 
     if not api_key:
         st.error("Error: GEMINI_API_KEY not found. Please add it to your Streamlit secrets for deployment or to a local .env file.")
