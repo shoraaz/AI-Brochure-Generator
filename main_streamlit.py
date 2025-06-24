@@ -21,8 +21,8 @@ def configure_api():
     if "GEMINI_API_KEY" in st.secrets:
         api_key = st.secrets["GEMINI_API_KEY"]
         st.info("Configuring API using key from Streamlit secrets.")
-    else:
-        pass()
+    #else:
+        #pass()
         # For local development, load the key from a .env file.
         #st.info("Streamlit secret not found. Attempting to load API key from .env file for local development.")
         #load_dotenv(override=True)
